@@ -14,7 +14,6 @@ const port = process.env.PORT || 5000;
 // mongodb setup
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.bhwsqpg.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
 
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -25,10 +24,19 @@ const client = new MongoClient(uri, {
 const run = async () => {
   try {
     const blogsCollection = client.db("Content").collection("blogs");
-
+    // get blogs
     app.get("/blogs", async (req, res) => {
       const blogs = await blogsCollection.find({}).toArray();
       res.send(blogs);
+    });
+    // post blogs
+    app.post("/blogs", async (req, res) => {
+      const blog = req.body;
+      const result = await blogsCollection.insertOne({
+        ...blog,
+        createdAt: new Date(),
+      });
+      res.send(result);
     });
   } catch {}
 };
