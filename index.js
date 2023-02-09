@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
@@ -36,6 +36,12 @@ const run = async () => {
         ...blog,
         createdAt: new Date(),
       });
+      res.send(result);
+    });
+    app.delete("/blogs/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await blogsCollection.deleteOne(filter);
       res.send(result);
     });
   } catch {}
